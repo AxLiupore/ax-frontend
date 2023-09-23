@@ -3,7 +3,7 @@
     <a-row align="center" :wrap="false" style="padding: 0">
       <a-col flex="300px"></a-col>
       <a-col flex="20px">
-        <a-link class="title" :to="{ name: 'home' }"> AxCode</a-link>
+        <router-link class="title" :to="{ name: '首页' }"> AxCode</router-link>
       </a-col>
       <a-col flex="auto">
         <a-menu
@@ -16,28 +16,8 @@
           </a-menu-item>
         </a-menu>
       </a-col>
-      <a-col v-if="true" flex="450px">
-        <a-button @click="handleClick" style="box-shadow: none">注册</a-button>
-        <a-modal
-          v-model:visible="visible"
-          title="注册"
-          @cancel="handleCancel"
-          @before-ok="handleBeforeOk"
-        >
-          <a-form :model="form">
-            <a-form-item field="account" label="用户名">
-              <a-input v-model="form.account" />
-            </a-form-item>
-            <a-form-item field="password" label="密码">
-              <a-input v-model="form.password" />
-            </a-form-item>
-            <a-form-item field="checkPassword" label="确认密码">
-              <a-input v-model="form.checkPassword" />
-            </a-form-item>
-          </a-form>
-        </a-modal>
-      </a-col>
-      <a-col v-else flex="450px">
+      <!--        v-if="loginUser && loginUser.role as string != ACCESS_ENUM.NOT_LOGIN"-->
+      <a-col flex="450px" v-if="loginUser.role !== ACCESS_ENUM.NOT_LOGIN">
         <a-dropdown position="bottom" trigger="hover">
           <a-avatar :size="35">
             <IconUser />
@@ -47,22 +27,74 @@
               <template #icon>
                 <icon-home />
               </template>
-              我的空间
+              <a-anchor-link @click="">我的空间</a-anchor-link>
             </a-doption>
             <a-doption>
               <template #icon>
                 <icon-idcard />
               </template>
-              个人信息
+              <a-anchor-link>个人信息</a-anchor-link>
             </a-doption>
             <a-doption>
               <template #icon>
                 <icon-poweroff />
               </template>
-              退出
+              <a-anchor-link @click="logout">退出登录</a-anchor-link>
             </a-doption>
           </template>
         </a-dropdown>
+      </a-col>
+      <a-col v-else flex="470px">
+        <a-button @click="handleClickRegister" style="box-shadow: none"
+          >注册
+        </a-button>
+        <a-modal
+          v-model:visible="visibleRegister"
+          title="注册"
+          @cancel="handleCancelRegister"
+          @ok="handleBeforeOkRegister"
+          ok-text="注册"
+          cancel-text="取消"
+          hide-cancel="true"
+          width="27%"
+          :onKeydown="onMountRegister"
+        >
+          <a-form :model="formRegister">
+            <a-form-item field="account" label="用户名">
+              <a-input v-model="formRegister.account" />
+            </a-form-item>
+            <a-form-item field="password" label="密码">
+              <a-input-password v-model="formRegister.password" />
+            </a-form-item>
+            <a-form-item field="checkPassword" label="确认密码">
+              <a-input-password v-model="formRegister.checkPassword" />
+            </a-form-item>
+          </a-form>
+        </a-modal>
+        <a-button
+          @click="handleClickLogin"
+          style="box-shadow: none; margin-left: 20px"
+          >登录
+        </a-button>
+        <a-modal
+          v-model:visible="visibleLogin"
+          title="登录"
+          @cancel="handleCancelLogin"
+          @ok="handleBeforeOkLogin"
+          hide-cancel="true"
+          ok-text="登录"
+          :onkeydown="onMountLogin"
+          width="27%"
+        >
+          <a-form :model="formLogin">
+            <a-form-item field="account" label="用户名">
+              <a-input v-model="formLogin.account" />
+            </a-form-item>
+            <a-form-item field="password" label="密码">
+              <a-input-password v-model="formLogin.password" />
+            </a-form-item>
+          </a-form>
+        </a-modal>
       </a-col>
     </a-row>
   </div>
@@ -70,48 +102,27 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
-import { computed, ref, reactive } from "vue";
+import { computed, ref, reactive, onMounted } from "vue";
 import { routes } from "@/router/routes";
-
-const visible = ref(false);
-const form = reactive({
-  account: "",
-  password: "",
-  checkPassword: "",
-});
-
-const handleClick = () => {
-  visible.value = true;
-};
-
-const handleBeforeOk = () => {
-  console.log(form);
-  window.setTimeout(() => {
-    // prevent close
-    // done(false)
-  }, 3000);
-};
-const handleCancel = () => {
-  visible.value = false;
-};
+import { useStore } from "vuex";
+import ACCESS_ENUM from "@/access/accessEnum";
+import {
+  LoginUserVO,
+  UserInfoControllerService,
+  UserLoginRequest,
+  UserRegisterRequest,
+} from "../../generated";
+import message from "@arco-design/web-vue/es/message";
+import Message from "@arco-design/web-vue/es/message";
 
 // 获取当前路由对象实例，用于执行编程式导航
 const router = useRouter();
-
 // 用于获取激活路由的路由信息对象：路由路径、查询参数、路由参数
 const route = useRoute();
+const store = useStore();
 
 // 这个是用于高亮显示菜单栏的下划线
-const selectedKeys = ref(["/"]);
-
-const visibleRoutes = computed(() => {
-  return routes.filter((item, index) => {
-    if (item.meta?.requestAuth) {
-      return false;
-    }
-    return true;
-  });
-});
+const selectedKeys = ref(["/home"]);
 
 // 路由跳转后，更新选中的菜单项
 router.afterEach((to, from) => {
@@ -124,8 +135,131 @@ const doMenuClick = (key: string) => {
     path: key,
   });
 };
+
+// 将LoginUserVO=>loginUser
+const loginUser: LoginUserVO = computed(
+  () => store.state.user?.loginUser
+) as LoginUserVO;
+
+// 是否显示模态框
+const visibleRegister = ref(false);
+const visibleLogin = ref(false);
+
+// 注册用到的表单
+const formRegister = reactive({
+  account: "",
+  password: "",
+  checkPassword: "",
+} as UserRegisterRequest);
+
+// 登录用到的表单
+const formLogin = reactive({
+  account: "",
+  password: "",
+} as UserLoginRequest);
+
+const handleClickRegister = () => {
+  visibleRegister.value = true;
+};
+
+const handleClickLogin = () => {
+  visibleLogin.value = true;
+};
+
+// 按下注册后的提交函数
+const handleBeforeOkRegister = async () => {
+  if ((formRegister.account?.length ?? 0) < 4) {
+    Message.error("账号不能小于4位");
+    return;
+  }
+  if (
+    (formRegister.password?.length ?? 0) < 8 ||
+    (formRegister.checkPassword?.length ?? 0) < 8
+  ) {
+    Message.error("密码不能小于8位");
+    return;
+  }
+  if (!(formRegister.password === formRegister.checkPassword)) {
+    Message.error("两次密码不一致");
+    return;
+  }
+  // 拿到后端的响应
+  const res = await UserInfoControllerService.userRegisterUsingPost(
+    formRegister
+  );
+  // 注册成功后跳转到主页
+  if (res.code === 0) {
+    // 获取到用户信息再跳转到主页
+    await store.dispatch("user/getLoginUser");
+    Message.success("注册成功");
+    await router.push({
+      path: "/home",
+      replace: true,
+    });
+    router.go(0);
+  } else {
+    Message.error("注册失败：", res.message);
+  }
+};
+
+// 按下登录后的提交函数
+const handleBeforeOkLogin = async () => {
+  if ((formLogin.account?.length ?? 0) < 4) {
+    Message.error("账号不能小于4位");
+    return;
+  }
+  if ((formLogin.password?.length ?? 0) < 8) {
+    Message.error("密码不能小于8位");
+    return;
+  }
+  const res = await UserInfoControllerService.userLoginUsingPost(formLogin);
+  if (res.code === 0) {
+    await store.dispatch("user/getLoginUser");
+    await router.push({
+      path: "/home",
+      replace: true,
+    });
+    router.go(0);
+  } else {
+    Message.error(res.message);
+  }
+};
+
+const handleCancelRegister = () => {
+  visibleRegister.value = false;
+};
+
+const handleCancelLogin = () => {
+  visibleLogin.value = false;
+};
+
+const onMountRegister = (event: any) => {
+  if (event === "Enter" || event.keyCode === 13) {
+    handleBeforeOkRegister();
+  }
+};
+
+const onMountLogin = (event: any) => {
+  if (event === "Enter" || event.keyCode === 13) {
+    handleBeforeOkLogin();
+  }
+};
+
+const visibleRoutes = computed(() => {
+  return routes.filter((item, index) => {
+    if (item.meta?.requestAuth) {
+      return false;
+    }
+    return true;
+  });
+});
+
+const logout = () => {
+  UserInfoControllerService.userLogoutUsingPost();
+  location.reload();
+};
 </script>
-<style scoped>
+<style>
 #GlobalHeader {
 }
 
@@ -133,5 +267,12 @@ const doMenuClick = (key: string) => {
   margin-left: 16px;
   text-decoration: none;
   color: black;
+}
+
+.arco-btn
+  arco-btn-primary
+  arco-btn-shape-square
+  arco-btn-size-medium
+  arco-btn-status-normal {
 }
 </style>

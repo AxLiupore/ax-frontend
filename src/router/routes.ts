@@ -40,16 +40,8 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/user/login/",
-    name: "login",
-    component: BasicLayout,
-    meta: {
-      requestAuth: true,
-    },
-  },
-  {
-    path: "/user/register/",
-    name: "register",
+    path: "/user/myspace/",
+    name: "个人空间",
     component: BasicLayout,
     meta: {
       requestAuth: true,

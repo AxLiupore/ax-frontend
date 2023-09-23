@@ -2,6 +2,8 @@
   <a-layout style="height: 400px">
     <a-layout-header class="header">
       <GlobalHeader />
+      <!--      <MdEditor />-->
+      <!--      <MdView />-->
     </a-layout-header>
     <a-layout-content class="content">
       <router-view />
@@ -11,6 +13,8 @@
 
 <script setup lang="ts">
 import GlobalHeader from "@/components/GlobalHeader.vue";
+import MdEditor from "@/components/MdEditor.vue";
+import MdView from "@/components/MdView.vue";
 </script>
 <style>
 .header {
