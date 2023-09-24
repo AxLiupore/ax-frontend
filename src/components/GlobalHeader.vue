@@ -26,13 +26,13 @@
               <template #icon>
                 <icon-home />
               </template>
-              <a-anchor-link>我的空间</a-anchor-link>
+              <a-anchor-link @click="accessSpace">我的空间</a-anchor-link>
             </a-doption>
             <a-doption>
               <template #icon>
                 <icon-idcard />
               </template>
-              <a-anchor-link>个人信息</a-anchor-link>
+              <a-anchor-link @click="userProfile">个人信息</a-anchor-link>
             </a-doption>
             <a-doption>
               <template #icon>
@@ -250,9 +250,27 @@ const handleBeforeOkRegister = async () => {
   }
 };
 
-const logout = () => {
+const logout = async () => {
   UserInfoControllerService.userLogoutUsingPost();
+  await router.push({
+    path: "/",
+    replace: true,
+  });
   location.reload();
+};
+
+const accessSpace = async () => {
+  await router.push({
+    path: "/user/myspace/",
+    replace: true,
+  });
+};
+
+const userProfile = async () => {
+  await router.push({
+    path: "/user/profile",
+    replace: true,
+  });
 };
 </script>
 <style>

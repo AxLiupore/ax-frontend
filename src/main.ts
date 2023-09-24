@@ -8,26 +8,16 @@ import "@arco-design/web-vue/dist/arco.css";
 
 import "@/plugins/axios";
 
-import VueMarkdownEditor from "@kangc/v-md-editor";
-import "@kangc/v-md-editor/lib/style/base-editor.css";
-import githubTheme from "@kangc/v-md-editor/lib/theme/github.js";
-import "@kangc/v-md-editor/lib/theme/style/github.css";
-import VMdPreview from "@kangc/v-md-editor/lib/preview";
-import "@kangc/v-md-editor/lib/style/preview.css";
-
-// 引入所有语言包
-import hljs from "highlight.js";
-
-VueMarkdownEditor.use(githubTheme, {
-  Hljs: hljs,
-});
+import { MdEditor, MdPreview } from "md-editor-v3";
+import "md-editor-v3/lib/style.css";
+import "md-editor-v3/lib/preview.css";
 
 const app = createApp(App);
 
 app.use(ArcoVue);
-app.use(VueMarkdownEditor);
-app.use(VMdPreview);
 app.use(store);
 app.use(router);
 app.use(ArcoVueIcon);
+app.use(MdEditor);
+app.use(MdPreview);
 app.mount("#app");

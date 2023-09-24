@@ -10,6 +10,9 @@ export default {
       username: "未登录",
       avatar: "",
       role: ACCESS_ENUM.NOT_LOGIN,
+      email: "",
+      phone: "",
+      profile: "",
     },
   }),
   actions: {
