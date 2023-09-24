@@ -16,7 +16,6 @@
           </a-menu-item>
         </a-menu>
       </a-col>
-      <!--        v-if="loginUser && loginUser.role as string != ACCESS_ENUM.NOT_LOGIN"-->
       <a-col flex="450px" v-if="loginUser.role !== ACCESS_ENUM.NOT_LOGIN">
         <a-dropdown position="bottom" trigger="hover">
           <a-avatar :size="35">
@@ -27,7 +26,7 @@
               <template #icon>
                 <icon-home />
               </template>
-              <a-anchor-link @click="">我的空间</a-anchor-link>
+              <a-anchor-link>我的空间</a-anchor-link>
             </a-doption>
             <a-doption>
               <template #icon>
@@ -101,8 +100,8 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute, useRouter } from "vue-router";
-import { computed, ref, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { computed, reactive, ref } from "vue";
 import { routes } from "@/router/routes";
 import { useStore } from "vuex";
 import ACCESS_ENUM from "@/access/accessEnum";
@@ -112,13 +111,11 @@ import {
   UserLoginRequest,
   UserRegisterRequest,
 } from "../../generated";
-import message from "@arco-design/web-vue/es/message";
 import Message from "@arco-design/web-vue/es/message";
 
 // 获取当前路由对象实例，用于执行编程式导航
 const router = useRouter();
-// 用于获取激活路由的路由信息对象：路由路径、查询参数、路由参数
-const route = useRoute();
+
 const store = useStore();
 
 // 这个是用于高亮显示菜单栏的下划线
@@ -136,7 +133,6 @@ const doMenuClick = (key: string) => {
   });
 };
 
-// 将LoginUserVO=>loginUser
 const loginUser: LoginUserVO = computed(
   () => store.state.user?.loginUser
 ) as LoginUserVO;
@@ -145,19 +141,6 @@ const loginUser: LoginUserVO = computed(
 const visibleRegister = ref(false);
 const visibleLogin = ref(false);
 
-// 注册用到的表单
-const formRegister = reactive({
-  account: "",
-  password: "",
-  checkPassword: "",
-} as UserRegisterRequest);
-
-// 登录用到的表单
-const formLogin = reactive({
-  account: "",
-  password: "",
-} as UserLoginRequest);
-
 const handleClickRegister = () => {
   visibleRegister.value = true;
 };
@@ -165,6 +148,71 @@ const handleClickRegister = () => {
 const handleClickLogin = () => {
   visibleLogin.value = true;
 };
+
+const handleCancelRegister = () => {
+  visibleRegister.value = false;
+};
+
+const handleCancelLogin = () => {
+  visibleLogin.value = false;
+};
+
+const onMountRegister = (event: any) => {
+  if (event === "Enter" || event.keyCode === 13) {
+    handleBeforeOkRegister();
+  }
+};
+
+const onMountLogin = (event: any) => {
+  if (event === "Enter" || event.keyCode === 13) {
+    handleBeforeOkLogin();
+  }
+};
+
+const visibleRoutes = computed(() => {
+  return routes.filter((item, index) => {
+    if (item.meta?.requestAuth) {
+      return false;
+    }
+    return true;
+  });
+});
+
+// 登录用到的表单
+const formLogin = reactive({
+  account: "",
+  password: "",
+} as UserLoginRequest);
+
+// 按下登录后的提交函数
+const handleBeforeOkLogin = async () => {
+  if ((formLogin.account?.length ?? 0) < 4) {
+    Message.error("账号不能小于4位");
+    return;
+  }
+  if ((formLogin.password?.length ?? 0) < 8) {
+    Message.error("密码不能小于8位");
+    return;
+  }
+  const res = await UserInfoControllerService.userLoginUsingPost(formLogin);
+  if (res.code === 0) {
+    await store.dispatch("user/getLoginUser");
+    await router.push({
+      path: "/home",
+      replace: true,
+    });
+    router.go(0);
+  } else {
+    Message.error(res.message);
+  }
+};
+
+// 注册用到的表单
+const formRegister = reactive({
+  account: "",
+  password: "",
+  checkPassword: "",
+} as UserRegisterRequest);
 
 // 按下注册后的提交函数
 const handleBeforeOkRegister = async () => {
@@ -202,58 +250,6 @@ const handleBeforeOkRegister = async () => {
   }
 };
 
-// 按下登录后的提交函数
-const handleBeforeOkLogin = async () => {
-  if ((formLogin.account?.length ?? 0) < 4) {
-    Message.error("账号不能小于4位");
-    return;
-  }
-  if ((formLogin.password?.length ?? 0) < 8) {
-    Message.error("密码不能小于8位");
-    return;
-  }
-  const res = await UserInfoControllerService.userLoginUsingPost(formLogin);
-  if (res.code === 0) {
-    await store.dispatch("user/getLoginUser");
-    await router.push({
-      path: "/home",
-      replace: true,
-    });
-    router.go(0);
-  } else {
-    Message.error(res.message);
-  }
-};
-
-const handleCancelRegister = () => {
-  visibleRegister.value = false;
-};
-
-const handleCancelLogin = () => {
-  visibleLogin.value = false;
-};
-
-const onMountRegister = (event: any) => {
-  if (event === "Enter" || event.keyCode === 13) {
-    handleBeforeOkRegister();
-  }
-};
-
-const onMountLogin = (event: any) => {
-  if (event === "Enter" || event.keyCode === 13) {
-    handleBeforeOkLogin();
-  }
-};
-
-const visibleRoutes = computed(() => {
-  return routes.filter((item, index) => {
-    if (item.meta?.requestAuth) {
-      return false;
-    }
-    return true;
-  });
-});
-
 const logout = () => {
   UserInfoControllerService.userLogoutUsingPost();
   location.reload();
@@ -267,12 +263,5 @@ const logout = () => {
   margin-left: 16px;
   text-decoration: none;
   color: black;
-}
-
-.arco-btn
-  arco-btn-primary
-  arco-btn-shape-square
-  arco-btn-size-medium
-  arco-btn-status-normal {
 }
 </style>

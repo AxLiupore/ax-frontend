@@ -11,11 +11,9 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   function (response) {
-    console.log("响应", response);
     return response;
   },
   function (error) {
-    console.log("错误", error);
     return Promise.reject(error);
   }
 );
