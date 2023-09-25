@@ -3,15 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type LoginUserVO = {
-    account?: string;
+export type UserUpdateRequest = {
     avatar?: string;
     email?: string;
     gender?: string;
     phone?: string;
     profile?: string;
-    role?: string;
     username?: string;
-    uuid?: number;
 };
 

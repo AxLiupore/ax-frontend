@@ -7,7 +7,7 @@ export default {
   state: () => ({
     loginUser: {
       account: "",
-      username: "未登录",
+      username: "",
       avatar: "",
       role: ACCESS_ENUM.NOT_LOGIN,
       email: "",

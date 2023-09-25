@@ -1,21 +1,25 @@
 <template>
-  <a-layout style="height: 400px">
-    <a-layout-header class="header">
+  <el-container>
+    <el-header class="header">
       <GlobalHeader />
-    </a-layout-header>
-    <a-layout-content class="content">
+    </el-header>
+    <el-main class="main">
       <router-view />
-    </a-layout-content>
-  </a-layout>
+    </el-main>
+  </el-container>
 </template>
 
 <script setup lang="ts">
 import GlobalHeader from "@/components/GlobalHeader.vue";
-import { ref } from "vue";
 </script>
 <style>
 .header {
   margin-bottom: 10px;
   box-shadow: #9f9b9b 1px 1px 1px;
+  padding: 0px;
+}
+
+el-main main {
+  padding: 0px;
 }
 </style>

@@ -7,6 +7,7 @@ import type { BaseResponse_LoginUserVO_ } from '../models/BaseResponse_LoginUser
 import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
 import type { UserLoginRequest } from '../models/UserLoginRequest';
 import type { UserRegisterRequest } from '../models/UserRegisterRequest';
+import type { UserUpdateRequest } from '../models/UserUpdateRequest';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -85,6 +86,28 @@ export class UserInfoControllerService {
             method: 'POST',
             url: '/api/user/register',
             body: userRegisterRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * updateLoginUser
+     * @param userUpdateRequest userUpdateRequest
+     * @returns BaseResponse_boolean_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static updateLoginUserUsingPost(
+        userUpdateRequest: UserUpdateRequest,
+    ): CancelablePromise<BaseResponse_boolean_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/user/update',
+            body: userUpdateRequest,
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

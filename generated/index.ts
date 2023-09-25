@@ -13,5 +13,6 @@ export type { BaseResponse_long_ } from './models/BaseResponse_long_';
 export type { LoginUserVO } from './models/LoginUserVO';
 export type { UserLoginRequest } from './models/UserLoginRequest';
 export type { UserRegisterRequest } from './models/UserRegisterRequest';
+export type { UserUpdateRequest } from './models/UserUpdateRequest';
 
 export { UserInfoControllerService } from './services/UserInfoControllerService';

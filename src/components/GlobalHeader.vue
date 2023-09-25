@@ -16,10 +16,10 @@
           </a-menu-item>
         </a-menu>
       </a-col>
-      <a-col flex="450px" v-if="loginUser.role !== ACCESS_ENUM.NOT_LOGIN">
+      <a-col flex="350px" v-if="loginUser.role !== ACCESS_ENUM.NOT_LOGIN">
         <a-dropdown position="bottom" trigger="hover">
           <a-avatar :size="35">
-            <IconUser />
+            <img :src="loginUser.avatar" />
           </a-avatar>
           <template #content>
             <a-doption>
