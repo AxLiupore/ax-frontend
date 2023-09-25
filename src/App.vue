@@ -5,11 +5,12 @@
 <script setup lang="ts">
 import BasicLayout from "@/layouts/BasicLayout.vue";
 import { onMounted } from "vue";
-import { useStore } from "vuex";
+import useUserStore from "@/store/user";
 
-const store = useStore();
+const userStore = useUserStore();
+
 const doInit = async () => {
-  await store.dispatch("user/getLoginUser");
+  await userStore.getLoginUser();
 };
 
 onMounted(() => {

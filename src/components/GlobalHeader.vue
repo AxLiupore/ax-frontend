@@ -103,7 +103,6 @@
 import { useRouter } from "vue-router";
 import { computed, reactive, ref } from "vue";
 import { routes } from "@/router/routes";
-import { useStore } from "vuex";
 import ACCESS_ENUM from "@/access/accessEnum";
 import {
   LoginUserVO,
@@ -112,11 +111,12 @@ import {
   UserRegisterRequest,
 } from "../../generated";
 import Message from "@arco-design/web-vue/es/message";
+import useUserStore from "@/store/user";
 
 // 获取当前路由对象实例，用于执行编程式导航
 const router = useRouter();
 
-const store = useStore();
+const userStore = useUserStore();
 
 // 这个是用于高亮显示菜单栏的下划线
 const selectedKeys = ref(["/home"]);
@@ -134,7 +134,7 @@ const doMenuClick = (key: string) => {
 };
 
 const loginUser: LoginUserVO = computed(
-  () => store.state.user?.loginUser
+  () => userStore.loginUser
 ) as LoginUserVO;
 
 // 是否显示模态框
@@ -180,8 +180,8 @@ const visibleRoutes = computed(() => {
 
 // 登录用到的表单
 const formLogin = reactive({
-  account: "",
-  password: "",
+  account: "axliu",
+  password: "12345678",
 } as UserLoginRequest);
 
 // 按下登录后的提交函数
@@ -196,12 +196,11 @@ const handleBeforeOkLogin = async () => {
   }
   const res = await UserInfoControllerService.userLoginUsingPost(formLogin);
   if (res.code === 0) {
-    await store.dispatch("user/getLoginUser");
+    await userStore.getLoginUser();
     await router.push({
       path: "/home",
       replace: true,
     });
-    router.go(0);
   } else {
     Message.error(res.message);
   }
@@ -238,7 +237,7 @@ const handleBeforeOkRegister = async () => {
   // 注册成功后跳转到主页
   if (res.code === 0) {
     // 获取到用户信息再跳转到主页
-    await store.dispatch("user/getLoginUser");
+    await userStore.getLoginUser();
     Message.success("注册成功");
     await router.push({
       path: "/home",
@@ -262,14 +261,14 @@ const logout = async () => {
 const accessSpace = async () => {
   await router.push({
     path: "/user/myspace/",
-    replace: true,
+    replace: false,
   });
 };
 
 const userProfile = async () => {
   await router.push({
     path: "/user/profile",
-    replace: true,
+    replace: false,
   });
 };
 </script>

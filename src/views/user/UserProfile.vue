@@ -26,10 +26,16 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="性别">
-                  <el-radio-group>
-                    <el-radio v-if="form.gender === '男'" border>男</el-radio>
-                    <el-radio v-else border>女</el-radio>
-                  </el-radio-group>
+                  <el-row>
+                    <el-radio-group v-model="radio">
+                      <el-radio label="1" @change="changeMan" border
+                        >男
+                      </el-radio>
+                      <el-radio label="2" @change="changeWoman" border
+                        >女
+                      </el-radio>
+                    </el-radio-group>
+                  </el-row>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -43,49 +49,68 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useStore } from "vuex";
-import { LoginUserVO, UserInfoControllerService } from "../../../generated";
-import { computed, onMounted, reactive, ref } from "vue";
+import {
+  LoginUserVO,
+  UserInfoControllerService,
+  UserUpdateRequest,
+} from "../../../generated";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import Message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
+import useUserStore from "@/store/user";
 
-const store = useStore();
+const userStore = useUserStore();
 
 const router = useRouter();
 
-const loginUser: LoginUserVO = computed(
-  () => store.state.user?.loginUser
-) as LoginUserVO;
-console.log(loginUser.username);
-console.log(loginUser.avatar);
-const form = reactive({
-  username: "",
-  avatar: "",
-  email: "",
-  phone: "",
-  profile: "",
-  gender: "",
-});
+const radio = ref("");
 
-onMounted(async () => {
-  form.username = loginUser.username as string;
-  form.avatar = loginUser.avatar as string;
-  form.email = loginUser.email as string;
-  form.phone = loginUser.phone as string;
-  form.profile = loginUser.profile as string;
-  form.gender = loginUser.gender as string;
+const loginUser: LoginUserVO = computed(
+  () => userStore.loginUser
+) as LoginUserVO;
+
+const form = reactive({
+  username: userStore.loginUser.username,
+  avatar: userStore.loginUser.avatar,
+  email: userStore.loginUser.email,
+  gender: userStore.loginUser.gender,
+  phone: userStore.loginUser.phone,
+  profile: userStore.loginUser.profile,
+} as UserUpdateRequest);
+
+watch(loginUser, (newLoginUser) => {
+  form.username = newLoginUser.username as string;
+  form.avatar = newLoginUser.avatar as string;
+  form.email = newLoginUser.email as string;
+  form.phone = newLoginUser.phone as string;
+  form.gender = newLoginUser.gender as string;
+  form.profile = newLoginUser.profile as string;
+});
+watch(loginUser, (newLoginUser) => {
+  if (newLoginUser.gender === "男") {
+    radio.value = "1";
+  } else {
+    radio.value = "2";
+  }
 });
 
 const updateLoginUser = async () => {
-  console.log(form);
   const res = await UserInfoControllerService.updateLoginUserUsingPost(form);
   if (res.code === 0) {
-    await store.dispatch("user/getLoginUser");
+    await userStore.getLoginUser();
     Message.success("更新成功");
-    router.go(0);
+    location.reload();
   } else {
     Message.error(res.message);
   }
+};
+
+const changeMan = () => {
+  form.gender = "男";
+};
+
+const changeWoman = () => {
+  form.gender = "女";
 };
 </script>
 

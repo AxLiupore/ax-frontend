@@ -13,14 +13,14 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from "vuex";
 import { LoginUserVO } from "../../../generated";
 import { computed } from "vue";
+import useUserStore from "@/store/user";
 
-const store = useStore();
+const userStore = useUserStore();
 
 const loginUser: LoginUserVO = computed(
-  () => store.state.user?.loginUser
+  () => userStore.loginUser
 ) as LoginUserVO;
 </script>
 
