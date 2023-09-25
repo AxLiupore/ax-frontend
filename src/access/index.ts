@@ -30,6 +30,7 @@ router.beforeEach(async (to, from, next) => {
       next("/noAuth/");
       return;
     }
+  } else {
+    next();
   }
-  next();
 });

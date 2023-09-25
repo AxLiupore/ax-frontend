@@ -15,6 +15,8 @@ import "md-editor-v3/lib/preview.css";
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 
+import { createPinia } from "pinia";
+
 const app = createApp(App);
 
 app.use(ArcoVue);
@@ -24,4 +26,5 @@ app.use(ArcoVueIcon);
 app.use(MdEditor);
 app.use(MdPreview);
 app.use(ElementPlus);
+app.use(createPinia());
 app.mount("#app");

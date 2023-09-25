@@ -61,14 +61,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/user/logout/",
-    name: "logout",
-    component: BasicLayout,
-    meta: {
-      requestAuth: true,
-    },
-  },
-  {
     path: "/404/",
     name: "404",
     component: NotFound,

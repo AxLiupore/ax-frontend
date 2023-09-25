@@ -26,7 +26,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="性别">
-                  <el-radio-group v-model="radio1">
+                  <el-radio-group>
                     <el-radio v-if="form.gender === '男'" border>男</el-radio>
                     <el-radio v-else border>女</el-radio>
                   </el-radio-group>
@@ -56,7 +56,8 @@ const router = useRouter();
 const loginUser: LoginUserVO = computed(
   () => store.state.user?.loginUser
 ) as LoginUserVO;
-
+console.log(loginUser.username);
+console.log(loginUser.avatar);
 const form = reactive({
   username: "",
   avatar: "",
