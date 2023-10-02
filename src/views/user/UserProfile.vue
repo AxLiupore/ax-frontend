@@ -2,21 +2,24 @@
   <div id="UserProfile">
     <el-row :gutter="12" style="margin-top: 10px">
       <el-col :span="7">
-        <el-avatar
-          :size="60"
-          :src="loginUser.avatar"
-          style="margin-bottom: 10px"
-        />
+        <el-row type="flex" justify="center">
+          <el-avatar
+            :size="60"
+            :src="loginUser.avatar"
+            style="margin-bottom: 10px"
+          />
+        </el-row>
         <el-card shadow="always"></el-card>
       </el-col>
-
       <el-col :span="17">
         <el-card shadow="always">
-          <el-avatar
-            :size="100"
-            :src="loginUser.avatar"
-            style="margin-bottom: 20px"
-          />
+          <el-row type="flex" justify="center">
+            <el-avatar
+              :size="100"
+              :src="loginUser.avatar"
+              style="margin-bottom: 20px"
+            />
+          </el-row>
           <el-form :model="form" :label-position="'top'">
             <el-row :gutter="20">
               <el-col :span="12">
@@ -39,6 +42,28 @@
                 </el-form-item>
               </el-col>
             </el-row>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="电话">
+                  <el-input v-model="form.phone" placeholder="请输入电话" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="邮箱">
+                  <el-input v-model="form.email" placeholder="请输入邮箱" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+          <el-form :model="form" :label-position="'top'">
+            <el-form-item label="个人简介">
+              <el-input
+                v-model="form.profile"
+                :rows="3"
+                type="textarea"
+                placeholder="关于你的个性、爱好、兴趣等等..."
+              />
+            </el-form-item>
           </el-form>
         </el-card>
       </el-col>
@@ -70,22 +95,29 @@ const loginUser: LoginUserVO = computed(
 ) as LoginUserVO;
 
 const form = reactive({
-  username: userStore.loginUser.username,
-  avatar: userStore.loginUser.avatar,
-  email: userStore.loginUser.email,
-  gender: userStore.loginUser.gender,
-  phone: userStore.loginUser.phone,
-  profile: userStore.loginUser.profile,
+  username: "",
+  avatar: "",
+  email: "",
+  gender: "",
+  phone: "",
+  profile: "",
 } as UserUpdateRequest);
 
-watch(loginUser, (newLoginUser) => {
-  form.username = newLoginUser.username as string;
-  form.avatar = newLoginUser.avatar as string;
-  form.email = newLoginUser.email as string;
-  form.phone = newLoginUser.phone as string;
-  form.gender = newLoginUser.gender as string;
-  form.profile = newLoginUser.profile as string;
+onMounted(async () => {
+  const res = await UserInfoControllerService.getLoginUserUsingGet();
+  if (res.code === 0) {
+    form.username = userStore.loginUser.username;
+    form.avatar = userStore.loginUser.avatar;
+    form.email = userStore.loginUser.email;
+    form.gender = userStore.loginUser.gender;
+    form.phone = userStore.loginUser.phone;
+    form.profile = userStore.loginUser.profile;
+    radio.value = userStore.loginUser.gender === "男" ? "1" : "2";
+  } else {
+    Message.error("获取数据失败");
+  }
 });
+
 watch(loginUser, (newLoginUser) => {
   if (newLoginUser.gender === "男") {
     radio.value = "1";
@@ -98,8 +130,8 @@ const updateLoginUser = async () => {
   const res = await UserInfoControllerService.updateLoginUserUsingPost(form);
   if (res.code === 0) {
     await userStore.getLoginUser();
+    await userStore.getLoginUser();
     Message.success("更新成功");
-    location.reload();
   } else {
     Message.error(res.message);
   }

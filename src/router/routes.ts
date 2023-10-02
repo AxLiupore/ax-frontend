@@ -4,6 +4,7 @@ import NotFound from "@/components/NotFound.vue";
 import UserSpace from "@/views/user/UserSpace.vue";
 import UserProfile from "@/views/user/UserProfile.vue";
 import ACCESS_ENUM from "@/access/accessEnum";
+import ProblemBank from "@/views/problem/ProblemBank.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -22,7 +23,15 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/problem/",
     name: "题库",
-    component: BasicLayout,
+    component: ProblemBank,
+  },
+  {
+    path: "/problem/:",
+    name: "题库",
+    component: ProblemBank,
+    meta: {
+      requestAuth: true,
+    },
   },
   {
     path: "/contest/",

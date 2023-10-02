@@ -3,7 +3,13 @@
     <a-row align="center" :wrap="false" style="padding: 0">
       <a-col flex="300px"></a-col>
       <a-col flex="20px">
-        <router-link class="title" :to="{ name: '首页' }"> AxCode</router-link>
+        <router-link
+          class="title"
+          :to="{ name: '首页' }"
+          style="font-family: 'Lora', serif"
+        >
+          CodeNow
+        </router-link>
       </a-col>
       <a-col flex="auto">
         <a-menu
@@ -119,7 +125,7 @@ const router = useRouter();
 const userStore = useUserStore();
 
 // 这个是用于高亮显示菜单栏的下划线
-const selectedKeys = ref(["/home"]);
+const selectedKeys = ref(["/"]);
 
 // 路由跳转后，更新选中的菜单项
 router.afterEach((to, from) => {
