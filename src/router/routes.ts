@@ -1,10 +1,14 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { RouteRecordRaw } from "vue-router";
 import BasicLayout from "@/layouts/BasicLayout.vue";
 import NotFound from "@/components/NotFound.vue";
 import UserSpace from "@/views/user/UserSpace.vue";
 import UserProfile from "@/views/user/UserProfile.vue";
 import ACCESS_ENUM from "@/access/accessEnum";
 import ProblemBank from "@/views/problem/ProblemBank.vue";
+import ProblemContent from "@/views/problem/ProblemContent.vue";
+import DiscussionVIew from "@/views/discussion/DiscussionView.vue";
+import DiscussionView from "@/views/discussion/DiscussionView.vue";
+import DiscussionContent from "@/views/discussion/DiscussionContent.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -26,9 +30,10 @@ export const routes: Array<RouteRecordRaw> = [
     component: ProblemBank,
   },
   {
-    path: "/problem/:",
-    name: "题库",
-    component: ProblemBank,
+    path: "/problem/content/:id",
+    name: "刷题",
+    component: ProblemContent,
+    props: true,
     meta: {
       requestAuth: true,
     },
@@ -39,9 +44,18 @@ export const routes: Array<RouteRecordRaw> = [
     component: BasicLayout,
   },
   {
-    path: "/discussion/",
+    path: "/discussion/content/:id",
     name: "讨论",
-    component: BasicLayout,
+    component: DiscussionContent,
+    props: true,
+    meta: {
+      requestAuth: true,
+    },
+  },
+  {
+    path: "/discussion/",
+    name: "分享",
+    component: DiscussionView,
   },
   {
     path: "/user/",

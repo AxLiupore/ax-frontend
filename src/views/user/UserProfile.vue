@@ -79,14 +79,12 @@ import {
   UserInfoControllerService,
   UserUpdateRequest,
 } from "../../../generated";
-import { computed, onMounted, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch, watchEffect } from "vue";
 import Message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import useUserStore from "@/store/user";
 
 const userStore = useUserStore();
-
-const router = useRouter();
 
 const radio = ref("");
 
@@ -103,7 +101,7 @@ const form = reactive({
   profile: "",
 } as UserUpdateRequest);
 
-onMounted(async () => {
+const loadData = async () => {
   const res = await UserInfoControllerService.getLoginUserUsingGet();
   if (res.code === 0) {
     form.username = userStore.loginUser.username;
@@ -116,6 +114,17 @@ onMounted(async () => {
   } else {
     Message.error("获取数据失败");
   }
+};
+
+watchEffect(() => {
+  loadData();
+});
+
+/**
+ * 页面加载时请求数据
+ */
+onMounted(() => {
+  loadData();
 });
 
 watch(loginUser, (newLoginUser) => {

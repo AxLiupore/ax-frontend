@@ -1,7 +1,7 @@
 <template>
   <div id="GlobalHeader">
     <a-row align="center" :wrap="false" style="padding: 0">
-      <a-col flex="300px"></a-col>
+      <a-col flex="260px"></a-col>
       <a-col flex="20px">
         <router-link
           class="title"
@@ -22,7 +22,7 @@
           </a-menu-item>
         </a-menu>
       </a-col>
-      <a-col flex="350px" v-if="loginUser.role !== ACCESS_ENUM.NOT_LOGIN">
+      <a-col flex="300px" v-if="loginUser.role !== ACCESS_ENUM.NOT_LOGIN">
         <a-dropdown position="bottom" trigger="hover">
           <a-avatar :size="35">
             <img :src="loginUser.avatar" />
@@ -49,7 +49,7 @@
           </template>
         </a-dropdown>
       </a-col>
-      <a-col v-else flex="470px">
+      <a-col v-else flex="450px">
         <a-button @click="handleClickRegister" style="box-shadow: none"
           >注册
         </a-button>

@@ -12,6 +12,7 @@
 <script setup lang="ts">
 import GlobalHeader from "@/components/GlobalHeader.vue";
 import useUserStore from "@/store/user";
+import CodeEditor from "@/components/CodeEditor.vue";
 
 const userStore = useUserStore();
 </script>

@@ -7,7 +7,7 @@
       <el-card shadow="always">
         <el-row>
           <el-col :span="24">
-            <h1 class="CodeNow">CodeNow题库</h1>
+            <h1 class="CodeNow">CodeNow技术分享</h1>
           </el-col>
         </el-row>
         <el-row>
@@ -17,7 +17,7 @@
               <el-col :span="22">
                 <el-input
                   v-model="searchParams.searchText"
-                  placeholder="搜索题号、标题、内容、题目来源、标签"
+                  placeholder="搜索标题、内容、分类、作者"
                   @change="onSearch"
                 />
               </el-col>
@@ -34,39 +34,28 @@
         </el-row>
         <el-divider />
         <el-row>
-          <el-table :data="problemList" stripe style="width: 100%">
-            <el-table-column label="" width="100"></el-table-column>
-            <el-table-column prop="problemId" label="题号" width="180" />
+          <el-table :data="discussionList" stripe style="width: 100%">
+            <el-table-column label="" width="30"></el-table-column>
             <el-table-column prop="title" label="标题" width="500">
               <template v-slot="scope">
                 <router-link
-                  :to="{ name: '刷题', params: { id: scope.row.problemId } }"
+                  :to="{ name: '讨论', params: { id: scope.row.id } }"
                 >
                   <el-link type="primary">{{ scope.row.title }}</el-link>
                 </router-link>
               </template>
             </el-table-column>
-            <el-table-column label="通过率" width="200">
+            <el-table-column prop="author" label="作者" width="300">
               <template v-slot="scope">
-                {{ getPassRate(scope.row.submitNum, scope.row.acceptNum) }}
+                <router-link
+                  :to="{ name: '讨论', params: { id: scope.row.id } }"
+                >
+                  <el-link type="primary">{{ scope.row.author }}</el-link>
+                </router-link>
               </template>
             </el-table-column>
-            <el-table-column prop="difficulty" label="难度" width="">
-              <template v-slot="scope">
-                <template v-if="scope.row.difficulty === 0">
-                  <el-tag class="tag" type="success" effect="light" round
-                    >简单
-                  </el-tag>
-                </template>
-                <template v-else-if="scope.row.difficulty === 1">
-                  <el-tag class="tag" effect="light" round>中等</el-tag>
-                </template>
-                <template v-else>
-                  <el-tag class="tag" type="danger" effect="light" round
-                    >困难
-                  </el-tag>
-                </template>
-              </template>
+            <el-table-column label="发帖时间" width="200"></el-table-column>
+            <el-table-column prop="difficulty" label="阅读量" width="">
             </el-table-column>
           </el-table>
         </el-row>
@@ -89,12 +78,15 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Setting } from "@element-plus/icons-vue";
+import { Search } from "@element-plus/icons-vue";
 import { onMounted, ref } from "vue";
 import Message from "@arco-design/web-vue/es/message";
-import { ProblemControllerService } from "../../../generated";
+import {
+  DiscussionControllerService,
+  ProblemControllerService,
+} from "../../../generated";
 
-const problemList = ref([]);
+const discussionList = ref([]);
 
 const total = ref<number>(0);
 
@@ -108,11 +100,11 @@ const searchParams = ref({
  * 获取全部的题目
  */
 const loadData = async () => {
-  const res = await ProblemControllerService.getPageProblemUsingPost(
+  const res = await DiscussionControllerService.queryAllDiscussionUsingPost(
     searchParams.value
   );
   if (res.code === 0) {
-    problemList.value = res.data?.records ?? [];
+    discussionList.value = res.data?.records ?? [];
     total.value = parseInt(res.data?.total ?? "0", 10);
   } else {
     Message.error("加载失败" + res.message);
@@ -164,11 +156,11 @@ const onSearch = async (value: string) => {
     ...searchParams.value,
     current: 1,
   };
-  const res = await ProblemControllerService.getPageBySearchProblemUsingPost(
+  const res = await DiscussionControllerService.querySearchDiscussionUsingPost(
     searchParams.value
   );
   if (res.code === 0) {
-    problemList.value = res.data?.records ?? problemList.value;
+    discussionList.value = res.data?.records ?? discussionList.value;
     total.value = parseInt(res.data?.total ?? total.value, 10);
   } else {
     Message.error("搜索失败" + res.message);

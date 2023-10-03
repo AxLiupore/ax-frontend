@@ -13,6 +13,7 @@ export type ProblemVO = {
     memoryLimit?: number;
     output?: string;
     problemId?: number;
+    scope?: string;
     source?: string;
     stackLimit?: number;
     submitNum?: number;

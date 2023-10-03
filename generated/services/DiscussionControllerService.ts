@@ -3,10 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { BaseResponse_boolean_ } from '../models/BaseResponse_boolean_';
+import type { BaseResponse_DiscussionVO_ } from '../models/BaseResponse_DiscussionVO_';
 import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
 import type { BaseResponse_Page_DiscussionVO_ } from '../models/BaseResponse_Page_DiscussionVO_';
 import type { DiscussionAddRequest } from '../models/DiscussionAddRequest';
 import type { DiscussionDeleteRequest } from '../models/DiscussionDeleteRequest';
+import type { DiscussionQueryOneRequest } from '../models/DiscussionQueryOneRequest';
 import type { DiscussionQueryRequest } from '../models/DiscussionQueryRequest';
 import type { DiscussionUpdateRequest } from '../models/DiscussionUpdateRequest';
 import type { DiscussionUserQueryRequest } from '../models/DiscussionUserQueryRequest';
@@ -84,18 +86,62 @@ export class DiscussionControllerService {
     }
 
     /**
-     * queryDiscussion
+     * queryAllDiscussion
      * @param discussionQueryRequest discussionQueryRequest
      * @returns BaseResponse_Page_DiscussionVO_ OK
      * @returns any Created
      * @throws ApiError
      */
-    public static queryDiscussionUsingPost(
+    public static queryAllDiscussionUsingPost(
         discussionQueryRequest: DiscussionQueryRequest,
     ): CancelablePromise<BaseResponse_Page_DiscussionVO_ | any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/discussion/query',
+            url: '/api/discussion/query/all',
+            body: discussionQueryRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * queryOneDiscussion
+     * @param discussionQueryOneRequest discussionQueryOneRequest
+     * @returns BaseResponse_DiscussionVO_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static queryOneDiscussionUsingPost(
+        discussionQueryOneRequest: DiscussionQueryOneRequest,
+    ): CancelablePromise<BaseResponse_DiscussionVO_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/discussion/query/one',
+            body: discussionQueryOneRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * querySearchDiscussion
+     * @param discussionQueryRequest discussionQueryRequest
+     * @returns BaseResponse_Page_DiscussionVO_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static querySearchDiscussionUsingPost(
+        discussionQueryRequest: DiscussionQueryRequest,
+    ): CancelablePromise<BaseResponse_Page_DiscussionVO_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/discussion/query/search',
             body: discussionQueryRequest,
             errors: {
                 401: `Unauthorized`,
