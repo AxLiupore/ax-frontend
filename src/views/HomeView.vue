@@ -4,55 +4,9 @@
       <div class="grid-content ep-bg-purple-dark" />
     </el-col>
     <el-col :span="10">
-      <el-card shadow="always">
-        <el-row
-          style="font-family: 'Lora', serif; font-size: 12px; margin-bottom: 0"
-          align="middle"
-          justify="start"
-        >
-          <el-col :span="2">
-            <el-avatar :src="discussion.avatar" />
-          </el-col>
-          <el-col :span="2">
-            <h6 style="margin: 0 auto">{{ discussion.author }}</h6>
-          </el-col>
-          <el-col :span="11"
-            ><h4 style="margin: 0 auto">{{ discussion.title }}</h4></el-col
-          >
-          <el-col :span="5">
-            <el-icon size="24px" class="titleButton">
-              <Star />
-            </el-icon>
-            <el-icon size="24px" class="titleButton">
-              <Edit />
-            </el-icon>
-            <el-icon size="24px" class="titleButton">
-              <StarFilled />
-            </el-icon>
-            <el-icon size="24px" class="titleButton">
-              <Check />
-            </el-icon>
-          </el-col>
-          <el-col :span="4">
-            <el-button style="margin-right: 20px" type="success" plain>
-              <el-icon size="20px">
-                <CircleCheck />
-              </el-icon>
-              <span> 关注 TA </span>
-            </el-button>
-          </el-col>
-        </el-row>
-        <el-divider style="margin: 14px auto" />
-        <el-row>
-          <MarkdownView :content="discussion.content" />
-        </el-row>
-      </el-card>
       <el-card style="margin-top: 10px">
         <el-row>
           <el-col :span="1"></el-col>
-          <el-col :span="2">
-            <el-avatar :src="discussion.avatar" />
-          </el-col>
           <el-col :span="20">
             <el-button
               type="info"
@@ -116,16 +70,8 @@ import {
   DiscussionAddRequest,
   DiscussionControllerService,
   DiscussionVO,
-} from "../../../generated";
+} from "../../generated";
 import Message from "@arco-design/web-vue/es/message";
-import {
-  Check,
-  CircleCheck,
-  Edit,
-  Star,
-  StarFilled,
-} from "@element-plus/icons-vue";
-import MarkdownView from "@/components/MarkdownView.vue";
 import useUserStore from "@/store/user";
 import MarkdownEditor from "@/components/MarkdownEditor.vue";
 
@@ -148,22 +94,6 @@ const form = reactive<DiscussionAddRequest>({
 const onChange = (value: string) => {
   form.content = value;
 };
-
-const loadData = async () => {
-  const res = await DiscussionControllerService.queryOneDiscussionUsingPost({
-    discussionId: parseInt(discussionId.value),
-  });
-  if (res.code === 0) {
-    discussion.value = res.data;
-  } else {
-    Message.error("获取讨论失败");
-  }
-};
-onMounted(() => {
-  loadData();
-});
-
-const items = ["Item 1", "Item 2", "Item 3", "Item 4"];
 
 const dialogVisible = ref(false);
 

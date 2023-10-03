@@ -27,6 +27,7 @@ const props = withDefaults(defineProps<Props>(), {
 #md-editor-v3-preview-wrapper {
   padding: 0px 2px;
   margin-bottom: 3px;
+  margin-top: -15px;
 }
 
 #md-editor-v3-preview {

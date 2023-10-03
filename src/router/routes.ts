@@ -9,6 +9,7 @@ import ProblemContent from "@/views/problem/ProblemContent.vue";
 import DiscussionVIew from "@/views/discussion/DiscussionView.vue";
 import DiscussionView from "@/views/discussion/DiscussionView.vue";
 import DiscussionContent from "@/views/discussion/DiscussionContent.vue";
+import HomeView from "@/views/HomeView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -22,7 +23,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/home/",
     name: "首页",
-    component: BasicLayout,
+    component: HomeView,
   },
   {
     path: "/problem/",

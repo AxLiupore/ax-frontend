@@ -54,8 +54,15 @@
                 </router-link>
               </template>
             </el-table-column>
-            <el-table-column label="发帖时间" width="200"></el-table-column>
+            <el-table-column label="发帖时间" width="180">
+              <template v-slot="scope">
+                {{ moment(scope.row.createTime).format("YYYY-MM-DD") }}
+              </template>
+            </el-table-column>
             <el-table-column prop="difficulty" label="阅读量" width="">
+              <template v-slot="scope">
+                {{ scope.row.viewNum }}
+              </template>
             </el-table-column>
           </el-table>
         </el-row>
@@ -81,10 +88,8 @@
 import { Search } from "@element-plus/icons-vue";
 import { onMounted, ref } from "vue";
 import Message from "@arco-design/web-vue/es/message";
-import {
-  DiscussionControllerService,
-  ProblemControllerService,
-} from "../../../generated";
+import { DiscussionControllerService } from "../../../generated";
+import moment from "moment";
 
 const discussionList = ref([]);
 
@@ -117,19 +122,6 @@ const loadData = async () => {
 onMounted(() => {
   loadData();
 });
-
-/**
- * 计算通过率
- * @param submitNum
- * @param acceptNum
- */
-const getPassRate = (submitNum: any, acceptNum: any) => {
-  if (submitNum === "0") {
-    return "100.00%";
-  }
-  const rate = (acceptNum / submitNum) * 100;
-  return rate.toFixed(2) + "%"; // 保留两位小数并转换为百分比
-};
 
 /**
  * 修改页数

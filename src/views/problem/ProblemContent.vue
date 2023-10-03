@@ -8,7 +8,7 @@
         <el-row style="font-family: 'Lora', serif; font-size: 18px">
           <h2>{{ problem.problemId }}. {{ problem.title }}</h2>
         </el-row>
-        <el-tabs type="card" class="demo-tabs">
+        <el-tabs type="card" class="demo-tabs" style="margin-top: 10px">
           <el-tab-pane>
             <template #label>
               <span class="custom-tabs-label">
@@ -283,7 +283,7 @@ strong {
 
 .box {
   border-radius: 0;
-  padding: 6px;
+  padding: 4px;
   border: 1px solid #d5d7d9;
   background-color: #f8f9fa;
 }
