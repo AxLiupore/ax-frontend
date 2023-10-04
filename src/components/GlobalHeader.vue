@@ -207,6 +207,7 @@ const handleBeforeOkLogin = async () => {
       path: "/home",
       replace: true,
     });
+    location.reload();
   } else {
     Message.error(res.message);
   }
@@ -249,6 +250,7 @@ const handleBeforeOkRegister = async () => {
       path: "/home",
       replace: true,
     });
+    location.reload();
     router.go(0);
   } else {
     Message.error("注册失败：", res.message);

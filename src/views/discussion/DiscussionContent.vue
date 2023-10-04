@@ -49,11 +49,10 @@
       </el-card>
       <el-card style="margin-top: 10px">
         <el-row>
-          <el-col :span="1"></el-col>
           <el-col :span="2">
             <el-avatar :src="discussion.avatar" />
           </el-col>
-          <el-col :span="20">
+          <el-col :span="21">
             <el-button
               type="info"
               :icon="Message"

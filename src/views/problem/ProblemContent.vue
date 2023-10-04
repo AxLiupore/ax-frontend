@@ -115,9 +115,9 @@
                             v-for="(tag, index) of problem.tags"
                             :key="index"
                             class="tag"
-                            type="info"
                             effect="light"
                             round
+                            style="margin-right: 5px"
                           >
                             {{ tag }}
                           </el-tag>
